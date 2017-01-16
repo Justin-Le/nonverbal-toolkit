@@ -101,12 +101,23 @@ try:
                 # Extract (x, y) coordinates of facial landmarks
                 parts = [[shape.part(n).x, shape.part(n).y] for n in range(shape.num_parts)]
                 parts = np.asarray(parts).astype(int)
+                
+                # Extract facial position-in-frame
+                position = d.top() # simple
 
+                # Compute landmark coordinates with respect to position-in-frame
+                # to enforce translation invariance of features (roughly, due to noise)
                 parts_x = parts.T[0] - d.left()
                 parts_y = parts.T[1] - d.top()
-                X = np.hstack((parts_x, parts_y))
 
-                pd.DataFrame(X).to_csv('./data/train.csv', mode='a', header=False, index=False)
+                # Create feature vector
+                # Continue stacking features here as needed
+                features = np.hstack((parts_x, parts_y))
+                features = np.hstack((features, position))
+                num_features = len(features)
+ 
+                # Append feature vector to csv
+                pd.DataFrame(features).to_csv('./data/train.csv', mode='a', header=False, index=False)
 
                 ######################################## 
                 # PLOTTING
@@ -139,6 +150,7 @@ try:
 except KeyboardInterrupt:
     pass
     
-reshape_data(label, time_window)
+reshape_data(label, num_features, time_window)
+os.system("rm ./data/train.csv")
 
 print "Done."

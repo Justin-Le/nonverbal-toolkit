@@ -3,7 +3,9 @@ import numpy as np
 import pandas as pd
 
 from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import cross_val_score
 from sklearn.metrics import classification_report
+from sklearn.datasets import load_iris
 
 from utils import combine_data
 
@@ -19,12 +21,8 @@ else:
  
 X_train, Y_train = combine_data(num_classes)
 
-print X_train
-print Y_train
-
 lr = LogisticRegression()
-lr.fit(X_train, Y_train)
-print lr.get_params()
+print cross_val_score(lr, X_train, Y_train, cv=5, scoring="accuracy")
 
-Y_pred = lr.predict(X_train)
-print classification_report(Y_pred, Y_train)
+# lr.fit()
+# Y_pred = lr.predict()

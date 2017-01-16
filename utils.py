@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-def reshape_data(label, time_window):
+def reshape_data(label, num_features, time_window):
     # Converts (n, 1)-shaped table in csv into (m, f) shape
     # where m is number of observations, f is number of features.
     # Input: class label (int), number of frames in sliding window (int) 
@@ -9,7 +9,7 @@ def reshape_data(label, time_window):
     # Reshape is easier in numpy
     data = np.loadtxt('./data/train.csv')
 
-    num_frames = len(data)/136
+    num_frames = len(data)/num_features
 
     # If video clip too short to fill the sliding window,
     # take entire clip as an observation
@@ -17,7 +17,7 @@ def reshape_data(label, time_window):
         time_window = num_frames
 
     # Take contents of each sliding window as an observation
-    num_features = 136*time_window
+    num_features = num_features*time_window
     num_rows = int(len(data)/(num_features)) # int() rounds down
     data = data[:num_rows*num_features] # prevent window from being truncated
     data = np.reshape(data, (num_rows, num_features))
@@ -28,7 +28,7 @@ def reshape_data(label, time_window):
 
     # Read/write csv is easier pandas
     df = pd.DataFrame(data)
-    df.to_csv('./data/train' + str(label))
+    df.to_csv('./data/train' + str(label) + '.csv')
 
     print "\nPreview of the most recent training data:"
     print df
@@ -38,10 +38,10 @@ def combine_data(num_classes):
     # Input: number of classes in training data
     # Output: data, labels
 
-    data = pd.read_csv('./data/train0')
+    data = pd.read_csv('./data/train0.csv')
 
     for label in range(num_classes - 1):
-        data = data.append(pd.read_csv('./data/train' + str(label + 1)), ignore_index=True)
+        data = data.append(pd.read_csv('./data/train' + str(label + 1) + '.csv'), ignore_index=True)
 
     return data.iloc[:, :-1], data.iloc[:, -1]
 
