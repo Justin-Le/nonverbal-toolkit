@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 
 def format_data(label, time_window):
     data = np.loadtxt('./data/train.csv')
@@ -20,12 +21,12 @@ def format_data(label, time_window):
     label_vec = np.asarray([label]*num_rows)
     data = np.c_[data, label_vec]
 
-    np.savetxt('./data/train' + str(label) + '.csv', data, delimiter=",")
+    df = pd.DataFrame(data)
+    df.to_csv('./data/train' + str(label))
+    # np.savetxt('./data/train' + str(label) + '.csv', data, delimiter=",")
 
     print "\nPreview of the most recent training data:"
-    print data
-    print "\nShape of data:"
-    print np.shape(data)
+    print df
 
 if __name__ == "__main__":
     format_data(0)

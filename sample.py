@@ -28,16 +28,19 @@ import cv2
 
 from format_data import format_data
 
-if len(sys.argv) != 2:
+if len(sys.argv) < 2:
+    predictor_path = "models/face_predictor.dat"
+elif len(sys.argv) == 2:
+    predictor_path = sys.argv[1]
+else:
     print(
-        "Usage:\n"
-        "./face_landmark_detection.py shape_predictor_68_face_landmarks.dat\n"
-        "Trained facial shape predictor can be downloaded from:\n"
-        "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2")
+        "\nUsage:\n"
+        "python sample.py models/face_predictor.dat\n"
+        "\nExample face predictor:\n"
+        "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2\n")
     exit()
 
 # Load trained model
-predictor_path = sys.argv[1]
 detector = dlib.get_frontal_face_detector()
 predictor = dlib.shape_predictor(predictor_path)
 
@@ -46,14 +49,14 @@ try:
     label = int(raw_input('Enter the number corresponding to the label of the action you would like to record.\n'))
     print label
 except ValueError:
-    print "Please enter a number from 0 to 9.\n"
+    print "\nPlease enter an integer.\n"
 
 # Request user input for the size of the sliding window
 try:
-    time_window = int(raw_input('Enter the duration (in number of frames) of the action.\n'))
+    time_window = int(raw_input('Enter the duration (in number of frames) of the action. This must match the duration of other actions in the data.\n'))
     print label
 except ValueError:
-    print "Please enter a number from 1 to 9.\n"
+    print "\nPlease enter an integer greater than 0.\n"
 
 # Initialize video input
 vc = cv2.VideoCapture(0)
