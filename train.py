@@ -2,6 +2,11 @@ import sys
 import numpy as np
 import pandas as pd
 
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import classification_report
+
+from utils import combine_data
+
 if len(sys.argv) < 2:
     num_classes = 2
 elif len(sys.argv) == 2:
@@ -12,9 +17,14 @@ else:
         "python train.py [number of classes]\n")
     exit()
  
-data = pd.read_csv('./data/train0')
+X_train, Y_train = combine_data(num_classes)
 
-for label in range(num_classes - 1):
-    data = data.append(pd.read_csv('./data/train' + str(label + 1)), ignore_index=True)
+print X_train
+print Y_train
 
-print data
+lr = LogisticRegression()
+lr.fit(X_train, Y_train)
+print lr.get_params()
+
+Y_pred = lr.predict(X_train)
+print classification_report(Y_pred, Y_train)

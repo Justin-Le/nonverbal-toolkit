@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 import cv2
 
-from format_data import format_data
+from utils import reshape_data
 
 if len(sys.argv) < 2:
     predictor_path = "models/face_predictor.dat"
@@ -47,14 +47,12 @@ predictor = dlib.shape_predictor(predictor_path)
 # Request user input for the label of the desired class in the training data
 try:
     label = int(raw_input('Enter the number corresponding to the label of the action you would like to record.\n'))
-    print label
 except ValueError:
     print "\nPlease enter an integer.\n"
 
 # Request user input for the size of the sliding window
 try:
     time_window = int(raw_input('Enter the duration (in number of frames) of the action. This must match the duration of other actions in the data.\n'))
-    print label
 except ValueError:
     print "\nPlease enter an integer greater than 0.\n"
 
@@ -141,6 +139,6 @@ try:
 except KeyboardInterrupt:
     pass
     
-format_data(label, time_window)
+reshape_data(label, time_window)
 
 print "Done."

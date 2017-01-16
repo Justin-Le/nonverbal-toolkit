@@ -1,7 +1,12 @@
 import numpy as np
 import pandas as pd
 
-def format_data(label, time_window):
+def reshape_data(label, time_window):
+    # Converts (n, 1)-shaped table in csv into (m, f) shape
+    # where m is number of observations, f is number of features.
+    # Input: class label (int), number of frames in sliding window (int) 
+
+    # Reshape is easier in numpy
     data = np.loadtxt('./data/train.csv')
 
     num_frames = len(data)/136
@@ -21,12 +26,24 @@ def format_data(label, time_window):
     label_vec = np.asarray([label]*num_rows)
     data = np.c_[data, label_vec]
 
+    # Read/write csv is easier pandas
     df = pd.DataFrame(data)
     df.to_csv('./data/train' + str(label))
-    # np.savetxt('./data/train' + str(label) + '.csv', data, delimiter=",")
 
     print "\nPreview of the most recent training data:"
     print df
 
+def combine_data(num_classes):
+    # Combines training data for separate classes into a single dataset.
+    # Input: number of classes in training data
+    # Output: data, labels
+
+    data = pd.read_csv('./data/train0')
+
+    for label in range(num_classes - 1):
+        data = data.append(pd.read_csv('./data/train' + str(label + 1)), ignore_index=True)
+
+    return data.iloc[:, :-1], data.iloc[:, -1]
+
 if __name__ == "__main__":
-    format_data(0)
+    reshape_data(0)
