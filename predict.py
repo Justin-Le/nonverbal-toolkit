@@ -25,6 +25,7 @@ import time
 import numpy as np
 import pandas as pd
 import cv2
+from sklearn.externals import joblib
 
 from utils import reshape_data, print_bbox, print_parts, plot_bbox, plot_landmarks
 
@@ -44,12 +45,6 @@ def predict():
     # Load trained model
     detector = dlib.get_frontal_face_detector()
     predictor = dlib.shape_predictor(predictor_path)
-
-    # Request user input for the label of the desired class in the training data
-    try:
-        label = int(raw_input('Enter the number corresponding to the label of the action you would like to record.\n'))
-    except ValueError:
-        print "\nPlease enter an integer.\n"
 
     # Request user input for the size of the sliding window
     try:
@@ -93,14 +88,11 @@ def predict():
 
             if len(dets) > 0:
                 for k, d in enumerate(dets):
-                    print_bbox(k, d)
-
                     ######################################## 
                     # FEATURE EXTRACTION
                     ######################################## 
 
                     shape = predictor(img, d)
-                    print_parts(shape)
 
                     # Extract (x, y) coordinates of facial landmarks
                     parts = [[shape.part(n).x, shape.part(n).y] for n in range(shape.num_parts)]
@@ -123,26 +115,28 @@ def predict():
                     # X_test is the feature vector for the entire window
                     X_test = np.hstack((X_test, features))
 
-                    if len(X_test) >= num_features*time_window:
-                        X_test = X_test[:num_features*time_window]
+                    if len(X_test) >= num_features*time_window: 
+                        # Reshape needed: 1d test data is deprecated
+                        X_test = X_test[:num_features*time_window].reshape(1, -1)
                         y_pred = lr.predict(X_test)
-                        print y_pred
-                        X_test = np.array([])
+
+                        if (y_pred == 0) or (y_pred == 2):
+                            print "\nNot smiley.\n"
+                        else:
+                            print "\nQuite smiley.\n"
+
+                        # Reshape into 1d again and
+                        # discard oldest vector from window
+                        X_test = X_test[0, num_features:]
      
                     # Append feature vector to csv
                     pd.DataFrame(features).to_csv('./data/test.csv', mode='a', header=False, index=False)
-
-                    plot_landmarks(parts, black_bg=True, color=(0, 255, 255), resolution=(480, 640))
-
-                    # Plot left, right, top, bottom coordinates of detected face
-                    plot_bbox(d.left(), d.right(), d.top(), d.bottom(), color=(0, 255, 255))
 
                     cv2.imshow("preview", img)
                     
                     key = cv2.waitKey(1)
 
             if time.time() - start >= 1:
-                print frame_count
                 start = time.time()
 
     # Stop predicting when user inputs Ctrl-c

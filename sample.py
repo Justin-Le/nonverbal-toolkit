@@ -26,7 +26,7 @@ import numpy as np
 import pandas as pd
 import cv2
 
-from utils import reshape_data
+from utils import reshape_data, print_bbox, print_parts, plot_bbox, plot_landmarks
 
 if len(sys.argv) < 2:
     predictor_path = "models/face_predictor.dat"
@@ -86,17 +86,14 @@ try:
 
         if len(dets) > 0:
             for k, d in enumerate(dets):
-                print("Face {}: Left: {} Top: {} Right: {} Bottom: {}".format(
-                    k+1, d.left(), d.top(), d.right(), d.bottom()))
+                print_bbox(img, k, d)
 
                 ######################################## 
                 # FEATURE EXTRACTION
                 ######################################## 
 
                 shape = predictor(img, d)
-
-                print("Part 0: {}, Part 1: {} ...".format(shape.part(0),
-                                                          shape.part(1)))
+                print_parts(shape)
 
                 # Extract (x, y) coordinates of facial landmarks
                 parts = [[shape.part(n).x, shape.part(n).y] for n in range(shape.num_parts)]
@@ -119,24 +116,10 @@ try:
                 # Append feature vector to csv
                 pd.DataFrame(features).to_csv('./data/train.csv', mode='a', header=False, index=False)
 
-                ######################################## 
-                # PLOTTING
-                ######################################## 
-
-                # Uncomment these 3 lines to plot landmarks over a black background
-                row = [[0, 0, 0]]*640
-                img = np.asarray([row]*480)
-                img = img.astype(np.uint8) # need uint8 for cv2.circle
-
-                # Plot landmarks
-                for i in range(len(parts)):
-                    cv2.circle(img, tuple(parts[i]), 1, (0, 255, 255))
-
                 # Plot left, right, top, bottom coordinates of detected face
-                cv2.circle(img, (d.left(), int(d.top() + (d.bottom() - d.top())/2.0)), 5, (0, 255, 255))
-                cv2.circle(img, (d.right(), int(d.top() + (d.bottom() - d.top())/2.0)), 5, (0, 255, 255))
-                cv2.circle(img, (int(d.left() + (d.right() - d.left())/2.0), d.top()), 5, (0, 255, 255))
-                cv2.circle(img, (int(d.left() + (d.right() - d.left())/2.0), d.bottom()), 5, (0, 255, 255))
+                plot_bbox(img, d.left(), d.right(), d.top(), d.bottom(), color=(0, 255, 255))
+
+                plot_landmarks(parts, black_bg=True, color=(0, 255, 255), resolution=(480, 640))
                 
                 cv2.imshow("preview", img)
                 

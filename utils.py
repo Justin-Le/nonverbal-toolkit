@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import cv2
 
 def reshape_data(label, num_features, time_window):
     # Converts (n, 1)-shaped table in csv into (m, f) shape
@@ -28,7 +29,7 @@ def reshape_data(label, num_features, time_window):
 
     # Read/write csv is easier pandas
     df = pd.DataFrame(data)
-    df.to_csv('./data/train' + str(label) + '.csv')
+    df.to_csv('./data/train' + str(label) + '.csv', index=False)
 
     print "\nPreview of the most recent training data:"
     print df
@@ -45,7 +46,7 @@ def combine_data(num_classes):
 
     return data.iloc[:, :-1], data.iloc[:, -1]
 
-def print_bbox(k, d):
+def print_bbox(img, k, d):
     print("Face {}: Left: {} Top: {} Right: {} Bottom: {}".format(
           k+1, d.left(), d.top(), d.right(), d.bottom()))
 
@@ -53,11 +54,11 @@ def print_parts(shape):
     print("Part 0: {}, Part 1: {} ...".format(shape.part(0),
                                               shape.part(1)))
 
-def plot_bbox(left, right, top, bottom, color=(0, 255, 255)):
-    cv2.circle(img, (left(), int(top() + (bottom() - top())/2.0)), 5, color)
-    cv2.circle(img, (right(), int(top() + (bottom() - top())/2.0)), 5, color)
-    cv2.circle(img, (int(left() + (right() - left())/2.0), top()), 5, color)
-    cv2.circle(img, (int(left() + (right() - left())/2.0), bottom()), 5, color)
+def plot_bbox(img, left, right, top, bottom, color=(0, 255, 255)):
+    cv2.circle(img, (left, int(top + (bottom - top)/2.0)), 5, color)
+    cv2.circle(img, (right, int(top + (bottom - top)/2.0)), 5, color)
+    cv2.circle(img, (int(left + (right - left)/2.0), top), 5, color)
+    cv2.circle(img, (int(left + (right - left)/2.0), bottom), 5, color)
                     
 def plot_landmarks(parts, black_bg=False, color=(0, 255, 255), resolution=(480, 640)):
     if black_bg == True:

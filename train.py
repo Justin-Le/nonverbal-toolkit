@@ -26,6 +26,7 @@ def train():
     lr = LogisticRegression()
     print cross_val_score(lr, X_train, Y_train, cv=5, scoring="accuracy")
 
+    lr.fit(X_train.iloc[:, 1:], Y_train)
     joblib.dump(lr, './models/logistic_regression.pkl')
 
 if __name__ == "__main__":
