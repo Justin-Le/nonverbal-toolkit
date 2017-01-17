@@ -6,6 +6,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import cross_val_score
 from sklearn.metrics import classification_report
 from sklearn.datasets import load_iris
+from sklearn.externals import joblib
 
 from utils import combine_data
 
@@ -23,6 +24,8 @@ X_train, Y_train = combine_data(num_classes)
 
 lr = LogisticRegression()
 print cross_val_score(lr, X_train, Y_train, cv=5, scoring="accuracy")
+
+joblib.dump(lr, './models/logistic_regression.sav')
 
 # lr.fit()
 # Y_pred = lr.predict()
