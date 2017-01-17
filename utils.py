@@ -45,5 +45,29 @@ def combine_data(num_classes):
 
     return data.iloc[:, :-1], data.iloc[:, -1]
 
+def print_bbox(k, d):
+    print("Face {}: Left: {} Top: {} Right: {} Bottom: {}".format(
+          k+1, d.left(), d.top(), d.right(), d.bottom()))
+
+def print_parts(shape):
+    print("Part 0: {}, Part 1: {} ...".format(shape.part(0),
+                                              shape.part(1)))
+
+def plot_bbox(left, right, top, bottom, color=(0, 255, 255)):
+    cv2.circle(img, (left(), int(top() + (bottom() - top())/2.0)), 5, color)
+    cv2.circle(img, (right(), int(top() + (bottom() - top())/2.0)), 5, color)
+    cv2.circle(img, (int(left() + (right() - left())/2.0), top()), 5, color)
+    cv2.circle(img, (int(left() + (right() - left())/2.0), bottom()), 5, color)
+                    
+def plot_landmarks(parts, black_bg=False, color=(0, 255, 255), resolution=(480, 640)):
+    if black_bg == True:
+        row = [[0, 0, 0]]*resolution[1]
+        img = np.asarray([row]*resolution[0])
+        img = img.astype(np.uint8) # need uint8 for cv2.circle
+
+    for i in range(len(parts)):
+        cv2.circle(img, tuple(parts[i]), 1, (0, 255, 255))
+
+
 if __name__ == "__main__":
     reshape_data(0)

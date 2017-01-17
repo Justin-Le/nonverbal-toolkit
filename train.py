@@ -10,22 +10,23 @@ from sklearn.externals import joblib
 
 from utils import combine_data
 
-if len(sys.argv) < 2:
-    num_classes = 2
-elif len(sys.argv) == 2:
-    num_classes = int(sys.argv[1])
-else:
-    print(
-        "\nUsage:\n"
-        "python train.py [number of classes]\n")
-    exit()
- 
-X_train, Y_train = combine_data(num_classes)
+def train():
+    if len(sys.argv) < 2:
+        num_classes = 2
+    elif len(sys.argv) == 2:
+        num_classes = int(sys.argv[1])
+    else:
+        print(
+            "\nUsage:\n"
+            "python train.py [number of classes]\n")
+        exit()
+     
+    X_train, Y_train = combine_data(num_classes)
 
-lr = LogisticRegression()
-print cross_val_score(lr, X_train, Y_train, cv=5, scoring="accuracy")
+    lr = LogisticRegression()
+    print cross_val_score(lr, X_train, Y_train, cv=5, scoring="accuracy")
 
-joblib.dump(lr, './models/logistic_regression.sav')
+    joblib.dump(lr, './models/logistic_regression.pkl')
 
-# lr.fit()
-# Y_pred = lr.predict()
+if __name__ == "__main__":
+    train()
