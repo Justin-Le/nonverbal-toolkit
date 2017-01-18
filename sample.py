@@ -120,9 +120,13 @@ def sample():
                     left_trajectory = np.hstack((left_trajectory, left))
 
                     if frame_count >= time_window:
-                       # Append the variance of position-in-frame to the end of each window
-                       features = np.hstack((features, np.var(top_trajectory)))
-                       features = np.hstack((features, np.var(left_trajectory)))
+                        # Append the variance of position-in-frame to the end of each window
+                        features = np.hstack((features, np.var(top_trajectory)))
+                        features = np.hstack((features, np.var(left_trajectory)))
+
+                        # Discard oldest positions from trajectories
+                        top_trajectory = top_trajectory[1:]
+                        left_trajectory = left_trajectory[1:]
      
                     # Append feature vector to csv
                     pd.DataFrame(features).to_csv('./data/train.csv', mode='a', header=False, index=False)

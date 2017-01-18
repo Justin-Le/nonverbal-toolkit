@@ -73,6 +73,10 @@ def predict():
     elif classifier == 'rf':
         clf = joblib.load('./models/random_forest.pkl')
 
+    # Initialize trajectories of top/left points of the facial position-in-frame
+    top_trajectory = np.array([])
+    left_trajectory = np.array([])
+
     # Perform predictions on video
     try:
         while rval:
@@ -102,7 +106,8 @@ def predict():
                     parts = np.asarray(parts).astype(int)
                     
                     # Extract facial position-in-frame
-                    position = d.top() # simple
+                    top = d.top()
+                    left = d.left()
 
                     # Compute landmark coordinates with respect to position-in-frame
                     # to enforce translation invariance of features (roughly, due to noise)
@@ -112,25 +117,45 @@ def predict():
                     # Create feature vector
                     # Continue stacking features here as needed
                     features = np.hstack((parts_x, parts_y))
-                    features = np.hstack((features, position))
-                    num_features = len(features)
+                    top_trajectory = np.hstack((top_trajectory, top))
+                    left_trajectory = np.hstack((left_trajectory, left))
+     
+                    if frame_count >= time_window:
+                       # Append the variance of position-in-frame to the end of each window
+                       features = np.hstack((features, np.var(top_trajectory)))
+                       features = np.hstack((features, np.var(left_trajectory)))
      
                     # X_test is the feature vector for the entire window
                     X_test = np.hstack((X_test, features))
 
-                    if len(X_test) >= num_features*time_window: 
+                    if len(X_test) >= 136*time_window + 2: 
                         # Reshape needed: 1d test data is deprecated
-                        X_test = X_test[:num_features*time_window].reshape(1, -1)
+                        X_test = X_test[:136*time_window + 2].reshape(1, -1)
                         y_pred = clf.predict(X_test)
 
-                        if (y_pred == 0) or (y_pred == 2):
+                        if (y_pred == 0):
                             print "\nNeutral.\n"
-                        else:
-                            print "\nHappy!\n"
+                        elif (y_pred == 1):
+                            print "\nYay!\n"
+                        elif (y_pred == 2):
+                            print "\nWow!\n"
+                        elif (y_pred == 3):
+                            print "\nI agree.\n"
+                        elif (y_pred == 4):
+                            print "\nHa! Ha! Ha!\n"
+                        elif (y_pred == 5):
+                            print "\nI disagree.\n"
+                        elif (y_pred == 6):
+                            print "\nStop!\n"
 
-                        # Reshape into 1d again and
-                        # discard oldest vector from window
-                        X_test = X_test[0, num_features:]
+                        # Reshape into 1d again,
+                        # discard oldest vector from window,
+                        # and discard the two position variances from window
+                        X_test = X_test[0, 136:-2]
+                        
+                        # Discard oldest positions from trajectories
+                        top_trajectory = top_trajectory[1:]
+                        left_trajectory = left_trajectory[1:]
      
                     cv2.imshow("preview", img)
                     

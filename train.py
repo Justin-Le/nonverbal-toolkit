@@ -1,4 +1,5 @@
 import sys
+import time
 import numpy as np
 import pandas as pd
 
@@ -31,14 +32,28 @@ def train():
 
     if classifier == 'lr':
         lr = LogisticRegression(penalty=str(param1), C=param2, random_state=seed)
-        print np.mean(cross_val_score(lr, X_train, Y_train, cv=5, scoring="accuracy"))
+        start = time.time()
+        score = cross_val_score(lr, X_train, Y_train, cv=10, scoring="accuracy")
+        cv_time = time.time() - start
+
+        print score
+        print np.mean(score)
+        print np.var(score)
+        print cv_time
 
         lr.fit(X_train.iloc[:, 1:], Y_train)
         joblib.dump(lr, './models/logistic_regression.pkl')
 
     elif classifier == 'rf':
         rf = RandomForestClassifier(n_estimators=int(param1), max_features=param2, random_state=seed)
-        print np.mean(cross_val_score(rf, X_train, Y_train, cv=5, scoring="accuracy"))
+        start = time.time()
+        score = cross_val_score(rf, X_train, Y_train, cv=10, scoring="accuracy")
+        cv_time = time.time() - start
+
+        print score
+        print np.mean(score)
+        print np.var(score)
+        print cv_time
 
         rf.fit(X_train.iloc[:, 1:], Y_train)
         joblib.dump(rf, './models/random_forest.pkl')
