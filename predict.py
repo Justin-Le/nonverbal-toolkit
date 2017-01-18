@@ -23,7 +23,6 @@ import glob
 import time
 
 import numpy as np
-import pandas as pd
 import cv2
 from sklearn.externals import joblib
 
@@ -31,19 +30,20 @@ from utils import reshape_data, print_bbox, print_parts, plot_bbox, plot_landmar
 
 def predict():
     if len(sys.argv) < 2:
-        predictor_path = "models/face_predictor.dat"
+        classifier = 'lr'
     elif len(sys.argv) == 2:
-        predictor_path = sys.argv[1]
+        classifier = str(sys.argv[1])
     else:
         print(
             "\nUsage:\n"
-            "python sample.py models/face_predictor.dat\n"
-            "\nExample face predictor:\n"
-            "http://dlib.net/files/shape_predictor_68_face_landmarks.dat.bz2\n")
+            "\npython predict.py [classifier]\n\n"
+
+            "\nChoose `classifier` as `lr` for logistic regression or `rf` for random forest, depending on the one chosen when executing `train.py` previously.\n")
         exit()
 
-    # Load trained model
+    # Load trained facial model
     detector = dlib.get_frontal_face_detector()
+    predictor_path = "models/face_predictor.dat"
     predictor = dlib.shape_predictor(predictor_path)
 
     # Request user input for the size of the sliding window
@@ -68,7 +68,10 @@ def predict():
     X_test = np.array([])
 
     # Load trained model
-    lr = joblib.load('./models/logistic_regression.pkl') 
+    if classifier == 'lr':
+        clf = joblib.load('./models/logistic_regression.pkl')
+    elif classifier == 'rf':
+        clf = joblib.load('./models/random_forest.pkl')
 
     # Perform predictions on video
     try:
@@ -118,20 +121,17 @@ def predict():
                     if len(X_test) >= num_features*time_window: 
                         # Reshape needed: 1d test data is deprecated
                         X_test = X_test[:num_features*time_window].reshape(1, -1)
-                        y_pred = lr.predict(X_test)
+                        y_pred = clf.predict(X_test)
 
                         if (y_pred == 0) or (y_pred == 2):
-                            print "\nNot smiley.\n"
+                            print "\nNeutral.\n"
                         else:
-                            print "\nQuite smiley.\n"
+                            print "\nHappy!\n"
 
                         # Reshape into 1d again and
                         # discard oldest vector from window
                         X_test = X_test[0, num_features:]
      
-                    # Append feature vector to csv
-                    pd.DataFrame(features).to_csv('./data/test.csv', mode='a', header=False, index=False)
-
                     cv2.imshow("preview", img)
                     
                     key = cv2.waitKey(1)
