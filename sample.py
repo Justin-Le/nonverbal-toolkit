@@ -124,9 +124,10 @@ def sample():
                         features = np.hstack((features, np.var(top_trajectory)))
                         features = np.hstack((features, np.var(left_trajectory)))
 
-                        # Discard oldest positions from trajectories
-                        top_trajectory = top_trajectory[1:]
-                        left_trajectory = left_trajectory[1:]
+                        # Reset trajectories and frame counter
+                        top_trajectory = np.array([])
+                        left_trajectory = np.array([])
+                        frame_count = 0
      
                     # Append feature vector to csv
                     pd.DataFrame(features).to_csv('./data/train.csv', mode='a', header=False, index=False)
@@ -147,9 +148,9 @@ def sample():
         pass
         
     # Add 2 to account for the variance of position-in-frame
-    num_features = 136 + 2
+    features_per_window = 136*time_window + 2
 
-    reshape_data(label, num_features, time_window)
+    reshape_data(label, features_per_window)
     os.system("rm ./data/train.csv")
 
     print "Done."

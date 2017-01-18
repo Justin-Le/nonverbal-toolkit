@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 import cv2
 
-def reshape_data(label, num_features, time_window):
+def reshape_data(label, features_per_window):
     # Converts (n, 1)-shaped table in csv into (m, f) shape
     # where m is number of observations, f is number of features.
     # Input: class label (int), number of frames in sliding window (int) 
@@ -10,18 +10,10 @@ def reshape_data(label, num_features, time_window):
     # Reshape is easier in numpy
     data = np.loadtxt('./data/train.csv')
 
-    num_frames = len(data)/num_features
-
-    # If video clip too short to fill the sliding window,
-    # take entire clip as an observation
-    if time_window > num_frames:
-        time_window = num_frames
-
     # Take contents of each sliding window as an observation
-    num_features = num_features*time_window
-    num_rows = int(len(data)/(num_features)) # int() rounds down
-    data = data[:num_rows*num_features] # prevent window from being truncated
-    data = np.reshape(data, (num_rows, num_features))
+    num_rows = int(len(data)/features_per_window) # int() rounds down
+    data = data[:num_rows*features_per_window] # drop final window to prevent truncation
+    data = np.reshape(data, (num_rows, features_per_window))
 
     # Place labels as the final column of the data
     label_vec = np.asarray([label]*num_rows)
