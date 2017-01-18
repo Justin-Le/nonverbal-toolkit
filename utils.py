@@ -60,15 +60,16 @@ def plot_bbox(img, left, right, top, bottom, color=(0, 255, 255)):
     cv2.circle(img, (int(left + (right - left)/2.0), top), 5, color)
     cv2.circle(img, (int(left + (right - left)/2.0), bottom), 5, color)
                     
-def plot_landmarks(parts, black_bg=False, color=(0, 255, 255), resolution=(480, 640)):
+def plot_landmarks(img, parts, black_bg=False, color=(0, 255, 255), resolution=(480, 640)):
     if black_bg == True:
         row = [[0, 0, 0]]*resolution[1]
         img = np.asarray([row]*resolution[0])
         img = img.astype(np.uint8) # need uint8 for cv2.circle
 
     for i in range(len(parts)):
-        cv2.circle(img, tuple(parts[i]), 1, (0, 255, 255))
+        cv2.circle(img, tuple(parts[i]), 1, color)
 
+    cv2.imshow("preview", img)
 
 if __name__ == "__main__":
     reshape_data(0)
