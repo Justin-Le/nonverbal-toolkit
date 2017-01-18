@@ -5,7 +5,7 @@
 The following documentation is intended for a rough prototype of the toolkit, where only facial expressions are considered. Future implementations will include recognition of hands, handheld items, and noises as means of expression, among other things.
 
 ## Sample
-**Track facial landmarks in real-time and store their coordinate trajectories in CSV files when the user enters Ctrl-c at the terminal.**
+**Track facial landmarks in real-time and store their coordinate trajectories**
 
 Usage:
 
@@ -15,7 +15,7 @@ Usage:
 
 The current default `face\_model` is the default in [dlib](https://github.com/davisking/dlib), renamed as `models/face_predictor.dat`.
 
-Each execution of `sample.py` generates a dataset for a new action class. Each action class is stored in a separate CSV file under the data directory.
+Each execution of `sample.py` generates a dataset for a new action class. Each action class is automatically stored in a separate CSV file under the data directory. Enter Ctrl-c at the terminal to end execution and generate these CSV files.
 
 Examples of action classes: smile, frown, nod.
 
@@ -73,4 +73,5 @@ It's recommended to install all of SciPy, which includes the last two requiremen
 * Create module for customizing cross-validation
 * Check input of `train.py` for incorrect number of arguments
 * Make all arguments optional for train.py
+* Add description of real-time method
 * In `train.py`, change to `fit(X_train, Y_train)` (a relic of a mistake I made when generating the default dataset)
