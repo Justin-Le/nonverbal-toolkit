@@ -74,4 +74,3 @@ It's recommended to install all of SciPy, which includes the last two requiremen
 * Check input of `train.py` for incorrect number of arguments
 * Make all arguments optional for train.py
 * Add description of real-time method
-* In `train.py`, change to `fit(X_train, Y_train)` (a relic of a mistake I made when generating the default dataset)

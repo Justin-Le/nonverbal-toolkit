@@ -41,7 +41,7 @@ def train():
         print np.var(score)
         print cv_time
 
-        lr.fit(X_train.iloc[:, 1:], Y_train)
+        lr.fit(X_train, Y_train)
         joblib.dump(lr, './models/logistic_regression.pkl')
 
     elif classifier == 'rf':
@@ -55,7 +55,7 @@ def train():
         print np.var(score)
         print cv_time
 
-        rf.fit(X_train.iloc[:, 1:], Y_train)
+        rf.fit(X_train, Y_train)
         joblib.dump(rf, './models/random_forest.pkl')
 
 if __name__ == "__main__":
