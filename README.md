@@ -5,7 +5,7 @@
 The following documentation is intended for a rough prototype of the toolkit, where only facial expressions are considered. Future implementations will include recognition of hands, handheld items, and noises as means of expression, among other things.
 
 ## Sample
-**Track facial landmarks in real-time and store their coordinate trajectories**
+**Track facial landmarks in real-time and store their coordinate trajectories.**
 
 Usage:
 
@@ -13,7 +13,7 @@ Usage:
 
 `face_model:` path to model trained on facial landmarks
 
-The current default `face\_model` is the default in [dlib](https://github.com/davisking/dlib), renamed as `models/face_predictor.dat`.
+The current default `face_model` is the default in [dlib](https://github.com/davisking/dlib), renamed as `models/face_predictor.dat`.
 
 Each execution of `sample.py` generates a dataset for a new action class. Each action class is automatically stored in a separate CSV file under the data directory. Enter Ctrl-c at the terminal to end execution and generate these CSV files.
 
