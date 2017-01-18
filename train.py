@@ -17,6 +17,9 @@ def train():
     elif len(sys.argv) == 2:
         num_classes = int(sys.argv[1])
         classifier = 'lr'
+        param1 = 'l2'
+        param2 = 1.0
+        seed = 0
     else:
         num_classes = int(sys.argv[1])
         classifier = str(sys.argv[2])
@@ -28,14 +31,14 @@ def train():
 
     if classifier == 'lr':
         lr = LogisticRegression(penalty=str(param1), C=param2, random_state=seed)
-        print cross_val_score(lr, X_train, Y_train, cv=5, scoring="accuracy")
+        print np.mean(cross_val_score(lr, X_train, Y_train, cv=5, scoring="accuracy"))
 
         lr.fit(X_train.iloc[:, 1:], Y_train)
         joblib.dump(lr, './models/logistic_regression.pkl')
 
     elif classifier == 'rf':
         rf = RandomForestClassifier(n_estimators=int(param1), max_features=param2, random_state=seed)
-        print cross_val_score(rf, X_train, Y_train, cv=5, scoring="accuracy")
+        print np.mean(cross_val_score(rf, X_train, Y_train, cv=5, scoring="accuracy"))
 
         rf.fit(X_train.iloc[:, 1:], Y_train)
         joblib.dump(rf, './models/random_forest.pkl')
