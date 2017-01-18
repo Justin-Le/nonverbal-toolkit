@@ -119,14 +119,13 @@ def predict():
                     features = np.hstack((parts_x, parts_y))
                     top_trajectory = np.hstack((top_trajectory, top))
                     left_trajectory = np.hstack((left_trajectory, left))
+                    X_test = np.hstack((X_test, features))
      
                     if frame_count >= time_window:
                         # Append the variance of position-in-frame to the end of each window
-                        features = np.hstack((features, np.var(top_trajectory)))
-                        features = np.hstack((features, np.var(left_trajectory)))
-     
                         # X_test is the feature vector for the entire window
-                        X_test = np.hstack((X_test, features))
+                        X_test = np.hstack((X_test, np.var(top_trajectory)))
+                        X_test = np.hstack((X_test, np.var(left_trajectory)))
 
                         # Reshape needed: 1d test data is deprecated
                         X_test = X_test[:136*time_window + 2].reshape(1, -1)
