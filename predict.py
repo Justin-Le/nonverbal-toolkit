@@ -122,6 +122,7 @@ def predict():
                         # Reshape needed: 1d test data is deprecated
                         X_test = X_test[:136*time_window].reshape(1, -1)
                         y_pred = clf.predict(X_test)
+                        print y_pred
 
                         if (y_pred == 0):
                             print "\nNeutral.\n"

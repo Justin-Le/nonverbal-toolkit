@@ -15,6 +15,10 @@ from utils import combine_data
 def train():
     if len(sys.argv) < 2:
         num_classes = 2
+        classifier = 'lr'
+        param1 = 'l2'
+        param2 = 1.0
+        seed = 0
     elif len(sys.argv) == 2:
         num_classes = int(sys.argv[1])
         classifier = 'lr'
