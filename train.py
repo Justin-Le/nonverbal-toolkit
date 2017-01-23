@@ -29,6 +29,7 @@ def train():
         seed = int(sys.argv[5])
      
     X_train, Y_train = combine_data(num_classes)
+    # X_train = X_train.iloc[:, :-2]
 
     if classifier == 'lr':
         lr = LogisticRegression(penalty=str(param1), C=param2, random_state=seed)

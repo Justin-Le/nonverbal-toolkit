@@ -26,6 +26,7 @@ import numpy as np
 import cv2
 from sklearn.externals import joblib
 
+from extract_features import extract_features
 from utils import reshape_data, print_bbox, print_parts, plot_bbox, plot_landmarks
 
 def predict():
@@ -99,24 +100,13 @@ def predict():
                     # FEATURE EXTRACTION
                     ######################################## 
 
-                    shape = predictor(img, d)
-
-                    # Extract (x, y) coordinates of facial landmarks
-                    parts = [[shape.part(n).x, shape.part(n).y] for n in range(shape.num_parts)]
-                    parts = np.asarray(parts).astype(int)
-                    
                     # Extract facial position-in-frame
                     top = d.top()
                     left = d.left()
 
-                    # Compute landmark coordinates with respect to position-in-frame
-                    # to enforce translation invariance of features (roughly, due to noise)
-                    parts_x = parts.T[0] - d.left()
-                    parts_y = parts.T[1] - d.top()
-
                     # Create feature vector
                     # Continue stacking features here as needed
-                    features = np.hstack((parts_x, parts_y))
+                    features = extract_features(predictor, img, d)
                     top_trajectory = np.hstack((top_trajectory, top))
                     left_trajectory = np.hstack((left_trajectory, left))
                     X_test = np.hstack((X_test, features))
@@ -124,11 +114,13 @@ def predict():
                     if frame_count >= time_window:
                         # Append the variance of position-in-frame to the end of each window
                         # X_test is the feature vector for the entire window
-                        X_test = np.hstack((X_test, np.var(top_trajectory)))
-                        X_test = np.hstack((X_test, np.var(left_trajectory)))
+                        #  X_test = np.hstack((X_test, np.var(top_trajectory)))
+                        #  X_test = np.hstack((X_test, np.var(left_trajectory)))
+                        #  print X_test[-2]
+                        #  print X_test[-1]
 
                         # Reshape needed: 1d test data is deprecated
-                        X_test = X_test[:136*time_window + 2].reshape(1, -1)
+                        X_test = X_test[:136*time_window].reshape(1, -1)
                         y_pred = clf.predict(X_test)
 
                         if (y_pred == 0):
@@ -149,7 +141,7 @@ def predict():
                         # Reshape into 1d again,
                         # discard oldest vector from window,
                         # and discard the two position variances from window
-                        X_test = X_test[0, 136:-2]
+                        X_test = X_test[0, 136:]
                         
                         # Discard oldest positions from trajectories
                         top_trajectory = top_trajectory[1:]
