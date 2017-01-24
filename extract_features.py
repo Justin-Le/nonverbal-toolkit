@@ -12,4 +12,4 @@ def extract_features(predictor, img, d):
         parts_x = parts.T[0] - d.left()
         parts_y = parts.T[1] - d.top()
 
-        return np.hstack((parts_x, parts_y))
+        return np.hstack((parts_x, parts_y)), parts

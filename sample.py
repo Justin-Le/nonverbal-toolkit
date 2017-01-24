@@ -26,6 +26,7 @@ import numpy as np
 import pandas as pd
 import cv2
 
+from extract_features import extract_features
 from utils import reshape_data, print_bbox, print_parts, plot_bbox, plot_landmarks
 
 def sample():
@@ -93,30 +94,8 @@ def sample():
                 for k, d in enumerate(dets):
                     print_bbox(img, k, d)
 
-                    ######################################## 
-                    # FEATURE EXTRACTION
-                    ######################################## 
+                    features, parts = extract_features(predictor, img, d)
 
-                    shape = predictor(img, d)
-                    # print_parts(shape)
-
-                    # Extract (x, y) coordinates of facial landmarks
-                    parts = [[shape.part(n).x, shape.part(n).y] for n in range(shape.num_parts)]
-                    parts = np.asarray(parts).astype(int)
-                    
-                    # Extract facial position-in-frame
-                    top = d.top()
-                    left = d.left()
-
-                    # Compute landmark coordinates with respect to position-in-frame
-                    # to enforce translation invariance of features (roughly, due to noise)
-                    parts_x = parts.T[0] - d.left()
-                    parts_y = parts.T[1] - d.top()
-
-                    # Create feature vector
-                    # Continue stacking features here as needed
-                    features = np.hstack((parts_x, parts_y))
-                    """
                     top_trajectory = np.hstack((top_trajectory, top))
                     left_trajectory = np.hstack((left_trajectory, left))
 
@@ -129,7 +108,6 @@ def sample():
                         top_trajectory = np.array([])
                         left_trajectory = np.array([])
                         frame_count = 0
-                    """
      
                     # Append feature vector to csv
                     pd.DataFrame(features).to_csv('./data/train.csv', mode='a', header=False, index=False)
