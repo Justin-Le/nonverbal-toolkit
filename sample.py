@@ -92,10 +92,17 @@ def sample():
 
             if len(dets) > 0:
                 for k, d in enumerate(dets):
-                    print_bbox(img, k, d)
+                    # print_bbox(img, k, d)
 
                     features, parts = extract_features(predictor, img, d)
+                    keypoints = parts[0] # left edge
+                    keypoints = np.vstack((keypoints, parts[20])) # right edge
+                    keypoints = np.vstack((keypoints, parts[16])) # left brow
+                    keypoints = np.vstack((keypoints, parts[23])) # right brow
+                    keypoints = np.vstack((keypoints, parts[38])) # left eye
+                    keypoints = np.vstack((keypoints, parts[43])) # right eye
 
+                    """
                     top_trajectory = np.hstack((top_trajectory, top))
                     left_trajectory = np.hstack((left_trajectory, left))
 
@@ -108,14 +115,15 @@ def sample():
                         top_trajectory = np.array([])
                         left_trajectory = np.array([])
                         frame_count = 0
-     
+                    """
+ 
                     # Append feature vector to csv
-                    pd.DataFrame(features).to_csv('./data/train.csv', mode='a', header=False, index=False)
+                    # pd.DataFrame(features).to_csv('./data/train.csv', mode='a', header=False, index=False)
 
                     # Plot left, right, top, bottom coordinates of detected face
                     plot_bbox(img, d.left(), d.right(), d.top(), d.bottom(), color=(0, 255, 255))
 
-                    plot_landmarks(img, parts, black_bg=True, color=(0, 255, 255), resolution=(480, 640))
+                    plot_landmarks(img, keypoints, black_bg=False, color=(0, 255, 255), resolution=(480, 640))
                     
                     key = cv2.waitKey(1)
 
