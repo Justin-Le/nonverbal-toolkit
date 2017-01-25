@@ -4,7 +4,7 @@
 
 ## Motivation
 
-Considering any configuration or movement of the hands, face, and head to be an "expression", the majority of techniques for expression recognition rely on fitting models to image/video data. What's wrong with this approach? Nothing, of course, assuming that the training data includes examples representative of the entire human race. It would be difficult to create such a dataset! A great number of people have features that appear nowhere in the currently available datasets, particularly people who have conditions such as:
+Considering any configuration or movement of the hands, face, and head to be an "expression", the majority of techniques for expression recognition rely on fitting models to a large database of images/videos. What's wrong with this approach? Nothing, of course, assuming that the training data includes examples representative of the entire human race. It would be difficult to create such a dataset! A great number of people have features that appear nowhere in the currently available datasets, particularly people who have conditions such as:
 
 * Cerebral Palsy
 * Treacher Collins Syndrome
