@@ -2,6 +2,8 @@
 
 **Sample, fit, predict -- a toolkit for nonverbal expression recognition.**
 
+[Video Demo](https://youtu.be/Ttd7IJQdOhA)
+
 The following documentation is intended for a rough prototype of the toolkit, where only facial expressions are considered. Future implementations will include recognition of hands, handheld items, and noises as means of expression, among other things.
 
 ## Sample
