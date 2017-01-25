@@ -11,10 +11,10 @@ Considering any configuration or movement of the hands, face, and head to be an 
 * Cleft Lip/Palate
 * Severe Injury
 
-and others that cause disfigurement. To make matters worse, even a single condition can have huge variation between examples, making it nearly impossible to create a dataset that represents, for instance, all individuals with cerebral palsy. For researchers and medical practitioners who aim to develop an expression recognition system for that adapts to their individual patients, a software toolkit would greatly facilitate the process. Such a toolkit would need to encompass three major tasks: 
+and others that cause disfigurement. To make matters worse, even a single condition can have huge variation between examples, making it nearly impossible to create a dataset that represents, for instance, all individuals with cerebral palsy. For researchers and medical practitioners who aim to develop an expression recognition system that adapts to their individual patients, a software toolkit would greatly facilitate the process. Such a toolkit would need to encompass three major tasks: 
 
 * collecting individualized data, tailored to the unique expressions of each patient
-* fitting models to the data in an iterative fashion, to avoid having to refit on the entire dataset with every new addition of data
+* fitting models to the data iteratively, to avoid having to refit on the entire dataset with every new addition of data
 * making predictions on new expressions in real-time, to act as a means of instant communication between patient and caretaker
 
 NVTK is a budding attempt to achieve this.
@@ -92,4 +92,4 @@ It's recommended to install all of SciPy, which includes the last two requiremen
 * Create module for customizing cross-validation
 * Check input of `train.py` for incorrect number of arguments
 * Make all arguments optional for train.py
-* Add description of real-time method
+* Add description of real-time algorithm
