@@ -27,6 +27,7 @@ import cv2
 from sklearn.externals import joblib
 
 from extract_features import extract_features
+from select_features import select_features
 from utils import reshape_data, print_bbox, print_parts, plot_bbox, plot_landmarks
 
 def predict():
@@ -106,11 +107,21 @@ def predict():
 
                     # Create feature vector
                     # Continue stacking features here as needed
-                    features = extract_features(predictor, img, d)
-                    top_trajectory = np.hstack((top_trajectory, top))
-                    left_trajectory = np.hstack((left_trajectory, left))
+                    features, parts = extract_features(predictor, img, d)
+
+                    keypoints = parts[0] # left edge
+                    keypoints = np.vstack((keypoints, parts[20])) # right edge
+                    keypoints = np.vstack((keypoints, parts[16])) # left brow
+                    keypoints = np.vstack((keypoints, parts[23])) # right brow
+                    keypoints = np.vstack((keypoints, parts[38])) # left eye
+                    keypoints = np.vstack((keypoints, parts[43])) # right eye
+                    features = keypoints.reshape(1, 12)[0]
+
                     X_test = np.hstack((X_test, features))
      
+                    top_trajectory = np.hstack((top_trajectory, top))
+                    left_trajectory = np.hstack((left_trajectory, left))
+
                     if frame_count >= time_window:
                         # Append the variance of position-in-frame to the end of each window
                         # X_test is the feature vector for the entire window
@@ -120,7 +131,9 @@ def predict():
                         #  print X_test[-1]
 
                         # Reshape needed: 1d test data is deprecated
-                        X_test = X_test[:136*time_window].reshape(1, -1)
+                        X_test = X_test[:12*time_window].reshape(1, -1)
+                        # X_test = select_features(X_test, time_window)
+
                         y_pred = clf.predict(X_test)
                         print y_pred
 
@@ -142,7 +155,7 @@ def predict():
                         # Reshape into 1d again,
                         # discard oldest vector from window,
                         # and discard the two position variances from window
-                        X_test = X_test[0, 136:]
+                        X_test = X_test[0, 12:]
                         
                         # Discard oldest positions from trajectories
                         top_trajectory = top_trajectory[1:]

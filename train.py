@@ -10,6 +10,7 @@ from sklearn.metrics import classification_report
 from sklearn.datasets import load_iris
 from sklearn.externals import joblib
 
+from select_features import select_features
 from utils import combine_data
 
 def train():
@@ -33,6 +34,7 @@ def train():
         seed = int(sys.argv[5])
      
     X_train, Y_train = combine_data(num_classes)
+    # X_train = select_features(X_train, 8)
     # X_train = X_train.iloc[:, :-2]
 
     if classifier == 'lr':

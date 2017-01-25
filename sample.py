@@ -101,7 +101,9 @@ def sample():
                     keypoints = np.vstack((keypoints, parts[23])) # right brow
                     keypoints = np.vstack((keypoints, parts[38])) # left eye
                     keypoints = np.vstack((keypoints, parts[43])) # right eye
-
+                    features = keypoints.reshape(1, 12)[0]
+                    print features
+                    
                     """
                     top_trajectory = np.hstack((top_trajectory, top))
                     left_trajectory = np.hstack((left_trajectory, left))
@@ -118,7 +120,7 @@ def sample():
                     """
  
                     # Append feature vector to csv
-                    # pd.DataFrame(features).to_csv('./data/train.csv', mode='a', header=False, index=False)
+                    pd.DataFrame(features).to_csv('./data/train.csv', mode='a', header=False, index=False)
 
                     # Plot left, right, top, bottom coordinates of detected face
                     plot_bbox(img, d.left(), d.right(), d.top(), d.bottom(), color=(0, 255, 255))
@@ -138,7 +140,7 @@ def sample():
     # Add 2 to account for the variance of position-in-frame
     # features_per_window = 136*time_window + 2
 
-    features_per_window = 136*time_window
+    features_per_window = 12*time_window
 
     reshape_data(label, features_per_window)
     os.system("rm ./data/train.csv")
